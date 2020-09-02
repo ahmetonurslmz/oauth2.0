@@ -11,25 +11,31 @@ app.use(express.urlencoded({ extended: true }));
 
 require('./routers')(app);
 
-
-require('./core/database/mongo');
-
-
 app.use((err, req, res, next) => {
-    const code = err.code || 500;
-    if (err.code) {
-        res.status(code).json({
+    if (err.code && err.result && err.result.messages) {
+        res.status(err.code).json({
             status: false,
             ...err,
         });
     } else {
+        const code = 500;
         res.status(code).json({
             code,
             status: false,
             message: 'Something went wrong!',
-            trace: err,
         });
     }
 });
 
-app.listen(process.env.PORT, () => console.log(`Application runs on port ${process.env.PORT}`));
+
+const run = async () => {
+    try {
+        const connectDb = require('./core/database/mongo');
+        await connectDb();
+        app.listen(process.env.PORT,async () => console.log(`Application runs on port ${process.env.PORT}`));
+    } catch (e) {
+        console.log('App has been crashed!');
+    }
+}
+
+run();
