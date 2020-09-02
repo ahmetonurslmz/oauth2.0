@@ -2,8 +2,8 @@ module.exports = {
     errorResolver(err, next) {
         try {
             const messages = [];
-            if (Object.prototype.hasOwnProperty.call(err, 'errors') && err.errors.response_type) {
-                const errorObject = err.errors.response_type;
+            if (Object.prototype.hasOwnProperty.call(err, 'errors')) {
+                const errorObject = err.errors[Object.keys(err.errors)[0]];
                 messages.push({
                     [errorObject.path]: `The ${errorObject.path} is ${errorObject.kind}`,
                 });
@@ -37,4 +37,24 @@ module.exports = {
             },
         });
     },
+
+    validationResolver(err, next) {
+        const messages = [];
+
+        err.forEach(error => {
+           if (!error.value) {
+               messages.push({
+                   [error.param]: `The ${error.param} is required`,
+               });
+           }
+        });
+
+        const errorData = {
+            code: 400,
+            result: {
+                messages,
+            },
+        };
+        next(errorData);
+    }
 };
