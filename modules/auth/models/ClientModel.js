@@ -15,7 +15,12 @@ const ClientSchema = new Schema({
         unique: true,
         required: true,
     },
-}, { collection });
+    client_url: {
+        type: String,
+        unique: true,
+        required: true,
+    },
+}, { collection, versionKey: false });
 
 
 const Client = mongoose.model(collection, ClientSchema);
