@@ -24,6 +24,10 @@ module.exports = {
                 messages.push({
                     [errorObject.path]: `The ${errorObject.path} is ${errorObject.kind}`,
                 });
+            } else if (Object.prototype.hasOwnProperty.call(err, 'reason')) {
+                messages.push({
+                    [err.path]: `The ${err.path} has invalid format.`,
+                });
             } else {
                 const field = Object.keys(err.keyValue)[0];
                 messages.push({
