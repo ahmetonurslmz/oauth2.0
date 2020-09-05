@@ -13,7 +13,8 @@ const connectDb = async () => {
         });
         console.log('MongoDb has been connected.');
     } catch (e) {
-        console.log(e);
+        console.log('Mongodb connection has been failed.');
+        throw e;
     }
 };
 
