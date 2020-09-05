@@ -1,14 +1,13 @@
 const mongoose = require('mongoose');
-const { ObjectId } = require('mongoose');
 
-const collection = 'authorization_code';
+const collection = 'authorization_codes';
 
 const { Schema } = mongoose;
 
 
-const AuthorizationCodeSchema = new Schema({
+const ModelSchema = new Schema({
     client_id: {
-        type: ObjectId,
+        type: mongoose.ObjectId,
         required: true,
     },
     code: {
@@ -16,7 +15,7 @@ const AuthorizationCodeSchema = new Schema({
       unique: true,
       required: true,
     },
-    expired_at: {
+    expiry_date: {
         type: Date,
         required: true,
     },
@@ -25,8 +24,12 @@ const AuthorizationCodeSchema = new Schema({
         required: true,
         default: true,
     },
+    created_at: {
+        type: Date,
+        default: new Date(),
+    },
 }, { collection, versionKey: false });
 
 
-const model = mongoose.model(collection, AuthorizationCodeSchema);
+const model = mongoose.model(collection, ModelSchema);
 module.exports = model
