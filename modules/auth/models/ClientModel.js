@@ -10,11 +10,6 @@ const ClientSchema = new Schema({
         required: true,
         type: String,
     },
-    client_id: {
-        type: String,
-        unique: true,
-        required: true,
-    },
     client_url: {
         type: String,
         unique: true,
@@ -23,5 +18,5 @@ const ClientSchema = new Schema({
 }, { collection, versionKey: false });
 
 
-const Client = mongoose.model(collection, ClientSchema);
-module.exports = Client
+const model = mongoose.model(collection, ClientSchema);
+module.exports = model
