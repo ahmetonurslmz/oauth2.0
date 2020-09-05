@@ -5,7 +5,11 @@ module.exports.findOrThrow = async (model, data, field) => {
     } else {
         const e = new Error();
         e.message = 'Couldn\'t find data';
-        e.field = field;
+        if (model && model.collection && model.collection.name) {
+            e.field = model.collection.name;
+        } else if (field) {
+            e.field = field;
+        }
         e.code = 404;
         throw e;
     }
