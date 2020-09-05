@@ -2,7 +2,24 @@ module.exports = {
     errorResolver(err, next) {
         try {
             const messages = [];
-            if (Object.prototype.hasOwnProperty.call(err, 'errors')) {
+            let code = 400;
+            if (err.code === 404) {
+                code = 404;
+                if (Object.prototype.hasOwnProperty.call(err, 'field')) {
+                    messages.push({
+                        [err.field]: `Couldn't find ${err.field}`,
+                    });
+                } else {
+                    messages.push({
+                        'not-found': `Couldn't find`,
+                    });
+                }
+            } else if (err.code === 403) {
+                code = 403;
+                messages.push({
+                    'forbidden': err.message,
+                });
+            } else if (Object.prototype.hasOwnProperty.call(err, 'errors')) {
                 const errorObject = err.errors[Object.keys(err.errors)[0]];
                 messages.push({
                     [errorObject.path]: `The ${errorObject.path} is ${errorObject.kind}`,
@@ -15,7 +32,7 @@ module.exports = {
             }
 
             const errorData = {
-                code: 400,
+                code,
                 result: {
                     messages,
                 },
