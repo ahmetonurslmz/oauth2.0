@@ -5,7 +5,7 @@ const collection = 'clients';
 const { Schema } = mongoose;
 
 
-const ClientSchema = new Schema({
+const ModelSchema = new Schema({
     response_type: {
         required: true,
         type: String,
@@ -15,8 +15,16 @@ const ClientSchema = new Schema({
         unique: true,
         required: true,
     },
+    is_active: {
+        type: Boolean,
+        default: true,
+    },
+    created_at: {
+        type: Date,
+        default: new Date(),
+    },
 }, { collection, versionKey: false });
 
 
-const model = mongoose.model(collection, ClientSchema);
+const model = mongoose.model(collection, ModelSchema);
 module.exports = model
