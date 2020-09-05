@@ -38,6 +38,10 @@ const ModelSchema = new Schema({
         type: Date,
         default: new Date(),
     },
+    authorization_code_id: {
+        type: mongoose.ObjectId,
+        required: true,
+    },
 }, { collection, versionKey: false });
 
 
