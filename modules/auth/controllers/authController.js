@@ -33,7 +33,6 @@ exports.getAccessToken = async (req, res, next) => {
                     const AuthorizationCode = require('../models/AuthorizationCodeModel');
                     await AuthorizationCode.init();
 
-
                     const AccessToken = require('../models/AccessTokenModel');
                     await AccessToken.init();
 
@@ -44,7 +43,7 @@ exports.getAccessToken = async (req, res, next) => {
                             client_id,
                             is_active: true,
                             expiry_date: { $gt: new Date() } // if expiry date is higher than now date.
-                        })
+                        });
                     } catch (e) {
                         // checks whether authorization code exists or not.
                         const { _id: authorization_code_id } = await findOrThrow(AuthorizationCode, { code });
@@ -58,7 +57,7 @@ exports.getAccessToken = async (req, res, next) => {
                         throw e;
                     }
 
-
+                    // generates access token
                     const HashGeneratorServiceInstance = new HashGeneratorService();
                     const accessTokenPayload = {
                         authorization_code_id: authorizationCodeData._id,
@@ -134,7 +133,7 @@ exports.getAuthorizationCode = async (req, res, next) => {
 
                 const PERIOD_OF_VALIDITY = 10; // minutes
 
-
+                // generates authorization code's expiry date by adding period of validity minutes to now date.
                 const expiry_date = new Date();
                 expiry_date.setMinutes(expiry_date.getMinutes() + PERIOD_OF_VALIDITY);
 
