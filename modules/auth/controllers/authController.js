@@ -59,17 +59,23 @@ exports.getAccessToken = async (req, res, next) => {
                     }
 
 
-
                     const HashGeneratorServiceInstance = new HashGeneratorService();
-                    const access_token = HashGeneratorServiceInstance.generate();
-                    const refresh_token = HashGeneratorServiceInstance.generate();
+                    const accessTokenPayload = {
+                        authorization_code_id: authorizationCodeData._id,
+                    };
+
+                    const access_token = HashGeneratorServiceInstance.generateJwtToken(accessTokenPayload);
+                    const refresh_token = HashGeneratorServiceInstance.generateJwtToken({
+                        ...accessTokenPayload,
+                        access_token,
+                    });
 
                     const newAccessToken = {
-                        grant_type,
+                        ...accessTokenPayload,
                         client_id,
+                        grant_type,
                         access_token,
                         refresh_token,
-                        authorization_code_id: authorizationCodeData._id,
                     };
 
                     const { _doc } = await AccessToken.create(newAccessToken);
@@ -79,7 +85,12 @@ exports.getAccessToken = async (req, res, next) => {
                     await AuthorizationCode.updateOne({ code }, { is_active: false });
 
                     successResolver(res, {
-                        data: _doc,
+                        data: {
+                            access_token,
+                            token_type: _doc.token_type,
+                            expires_in: _doc.expires_in,
+                            refresh_token,
+                        },
                         message: 'Access token generated!',
                     });
                 } else {
