@@ -167,7 +167,7 @@ exports.getAuthorizationCode = async (req, res, next) => {
 };
 
 
-module.exports.createClient = (req, res, next) => {
+module.exports.createClient = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         validationResolver(errors.array(), next);
@@ -175,23 +175,21 @@ module.exports.createClient = (req, res, next) => {
 
         const { client_url } = req.body;
 
-
-
         const newClient = {
             response_type: 'code',
             client_url,
         };
 
-
-        Client.init().then(() => {
-            Client.create(newClient).then((success) => {
-                successResolver(res, {
-                    data: success,
-                    message: 'Client created!',
-                });
-            }).catch((err) => {
-                errorResolver(err, next);
+        try {
+            await Client.init();
+            const { _doc: data } = await Client.create(newClient);
+            successResolver(res, {
+                data,
+                message: 'Client created!',
             });
-        });
+        } catch (e) {
+            errorResolver(e, next);
+
+        }
     }
 };
