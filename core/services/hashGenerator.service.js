@@ -1,11 +1,16 @@
 const crypto = require('crypto');
-const jwt = require('jsonwebtoken');
 
 class HashGeneratorService {
-    constructor() {
-        this.SECRET = 'password';
-        this.ALGORITHM = 'sha256';
-        this.ENCODING = 'base64';
+    get secret() {
+        return 'password';
+    }
+
+    get algorithm() {
+        return 'sha256';
+    }
+
+    get encodingType() {
+        return 'base64';
     }
 
     generateRandomString() {
@@ -13,11 +18,7 @@ class HashGeneratorService {
     }
 
     generate() {
-        return crypto.createHmac(this.ALGORITHM, this.SECRET).update(this.generateRandomString()).digest(this.ENCODING);
-    }
-
-    generateJwtToken(payload) {
-        return jwt.sign(payload, this.generateRandomString(), { expiresIn: 36000 });
+        return crypto.createHmac(this.algorithm, this.secret).update(this.generateRandomString()).digest(this.encodingType);
     }
 }
 
