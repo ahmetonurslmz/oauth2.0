@@ -49,14 +49,19 @@ module.exports = {
     },
 
     successResolver(res, result) {
-        res.status(200).json({
+        const data = {
             status: true,
             code: 200,
             message: result.message,
-            result: {
-               data: result.data
-            },
-        });
+        };
+
+        if (result && result.data) {
+            data.result = {
+                data: result.data
+            }
+        }
+
+        res.status(200).json(data);
     },
 
     validationResolver(err, next) {
