@@ -6,7 +6,39 @@ const { findOrThrow } = require('../../../core/utils/mongoInterrogator');
 
 
 const HashGeneratorService = require('../../../core/services/hashGenerator.service');
+const JWTGeneratorService = require('../../../core/services/JWTGenerator.service');
 
+
+module.exports.generateServerKeys = async (req, res) => {
+    const crypto = require('crypto');
+    const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
+        modulusLength: 2048,
+        publicKeyEncoding: {
+            type: 'spki',
+            format: 'pem'
+        },
+        privateKeyEncoding: {
+            type: 'pkcs8',
+            format: 'pem'
+        }
+    });
+
+    const fs = require('fs');
+    fs.writeFile('id_rsa_priv.pem', privateKey, 'utf8', function (err) {
+        if (err) return console.log(err);
+        console.log('id_rsa_priv.pem was generated.');
+    });
+
+
+    fs.writeFile('id_rsa_pub.pem', publicKey, 'utf8', function (err) {
+        if (err) return console.log(err);
+        console.log('id_rsa_pub.pem was generated');
+    });
+
+    successResolver(res, {
+        message: 'Server keys generated!',
+    });
+};
 
 /**
  * Works for only authorization code grant type
@@ -15,7 +47,7 @@ const HashGeneratorService = require('../../../core/services/hashGenerator.servi
  * @param next
  * @returns {Promise<void>}
  */
-exports.getAccessToken = async (req, res, next) => {
+module.exports.getAccessToken = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         validationResolver(errors.array(), next);
@@ -58,19 +90,16 @@ exports.getAccessToken = async (req, res, next) => {
                     }
 
                     // generates access token
-                    const HashGeneratorServiceInstance = new HashGeneratorService();
-                    const accessTokenPayload = {
-                        authorization_code_id: authorizationCodeData._id,
-                    };
+                    const jwtTokenInstance = new JWTGeneratorService();
+                    const access_token = jwtTokenInstance.sign;
 
-                    const access_token = HashGeneratorServiceInstance.generateJwtToken(accessTokenPayload);
-                    const refresh_token = HashGeneratorServiceInstance.generateJwtToken({
-                        ...accessTokenPayload,
-                        access_token,
-                    });
+                    jwtTokenInstance.payload = {
+                        exp: jwtTokenInstance.getDateInformation(true)
+                    }
+                    const refresh_token = jwtTokenInstance.sign;
 
                     const newAccessToken = {
-                        ...accessTokenPayload,
+                        authorization_code_id: authorizationCodeData._id,
                         client_id,
                         grant_type,
                         access_token,
@@ -111,7 +140,7 @@ exports.getAccessToken = async (req, res, next) => {
 };
 
 
-exports.getAuthorizationCode = async (req, res, next) => {
+module.exports.getAuthorizationCode = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         validationResolver(errors.array(), next);
