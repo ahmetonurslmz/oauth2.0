@@ -3,9 +3,9 @@ const router = express.Router();
 const { check } = require('express-validator');
 
 
-const { getAccessToken, getAuthorizationCode, createClient, generateServerKeys } = require('../controllers/authController');
+const { getAccessToken, getAuthorizationCode, createClient, generateServerKeys, verifyAccessToken } = require('../controllers/authController');
 
-router.post('/access_token', [
+router.post('/access_token/generation', [
     check('client_id').exists(),
     check('code').exists(),
     check('grant_type').exists()
@@ -17,7 +17,11 @@ router.post('/authorization_code', [
 router.post('/client', [
     check('client_url').exists()
 ], createClient);
-router.post('/server_keys', generateServerKeys)
+router.post('/server_keys', generateServerKeys);
+router.post('/access_token/verification', [
+    check('access_token').exists()
+],verifyAccessToken);
+
 
 module.exports = router;
 
