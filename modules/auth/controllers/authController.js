@@ -6,7 +6,7 @@ const { findOrThrow } = require('../../../core/utils/mongoInterrogator');
 
 
 const HashGeneratorService = require('../../../core/services/hashGenerator.service');
-const JWTGeneratorService = require('../../../core/services/JWTGenerator.service');
+const JWTGeneratorService = require('../../../core/services/jwtGenerator.service');
 
 
 module.exports.generateServerKeys = async (req, res) => {
@@ -38,6 +38,18 @@ module.exports.generateServerKeys = async (req, res) => {
     successResolver(res, {
         message: 'Server keys generated!',
     });
+};
+
+
+module.exports.verifyAccessToken = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        validationResolver(errors.array(), next);
+    } else {
+        successResolver(res, {
+            message: 'Access token is valid!',
+        });
+    }
 };
 
 /**
@@ -93,9 +105,7 @@ module.exports.getAccessToken = async (req, res, next) => {
                     const jwtTokenInstance = new JWTGeneratorService();
                     const access_token = jwtTokenInstance.sign;
 
-                    jwtTokenInstance.payload = {
-                        exp: jwtTokenInstance.getDateInformation(true)
-                    }
+                    jwtTokenInstance.payload = jwtTokenInstance.getDateInformation(true);
                     const refresh_token = jwtTokenInstance.sign;
 
                     const newAccessToken = {
