@@ -10,7 +10,7 @@ const path = require('path');
  * Optional payload or header can be enabled by assigning data to their properties.
  * To sign token, run sign method only
  */
-class JWTGeneratorService {
+class JwtGeneratorService {
     constructor() {
         this.createHashedSignature();
 
@@ -82,4 +82,4 @@ class JWTGeneratorService {
 }
 
 
-module.exports = JWTGeneratorService;
+module.exports = JwtGeneratorService;
