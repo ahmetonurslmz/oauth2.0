@@ -7,6 +7,7 @@ const { findOrThrow } = require('../../../core/utils/mongoInterrogator');
 
 const HashGeneratorService = require('../../../core/services/hashGenerator.service');
 const JWTGeneratorService = require('../../../core/services/jwtGenerator.service');
+const JwtVerificationService = require('../../../core/services/jwtVerification.service');
 
 
 module.exports.generateServerKeys = async (req, res) => {
@@ -46,9 +47,30 @@ module.exports.verifyAccessToken = async (req, res, next) => {
     if (!errors.isEmpty()) {
         validationResolver(errors.array(), next);
     } else {
-        successResolver(res, {
-            message: 'Access token is valid!',
-        });
+        try {
+            const verificationInstance = new JwtVerificationService(req.body.access_token);
+            const payload = verificationInstance.decrypt();
+
+            // Today date is smaller than expiration date so that access token is valid.
+            if ((new Date().getTime() - payload.exp) < 0) {
+                const active = verificationInstance.verify();
+
+                successResolver(res, {
+                    data: {
+                        active,
+                        ...payload,
+                    },
+                });
+            } else {
+                const e = new Error();
+                e.message = 'Access token has been expired!';
+                e.field = 'access_token';
+                e.code = 400;
+                throw e;
+            }
+        } catch (e) {
+            errorResolver(e, next);
+        }
     }
 };
 
