@@ -7,7 +7,6 @@ const { getAccessToken, getAuthorizationCode, createClient, generateServerKeys, 
 
 router.post('/access_token/generation', [
     check('client_id').exists(),
-    check('code').exists(),
     check('grant_type').exists()
 ], getAccessToken);
 router.post('/authorization_code', [
