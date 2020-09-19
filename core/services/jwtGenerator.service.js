@@ -12,7 +12,7 @@ const path = require('path');
  */
 class JwtGeneratorService {
     constructor() {
-        this.createHashedSignature();
+        this.fetchPrivateKey();
 
         this.optionalPayload = {};
         this.optionalHeader = {};
@@ -22,6 +22,11 @@ class JwtGeneratorService {
         const random = crypto.randomBytes(15);
         return random.toString('hex');
     }
+
+    fetchPrivateKey() {
+        this.PREV_KEY = fs.readFileSync(`${path.dirname(require.main.filename)}/id_rsa_priv.pem`, 'utf8');
+    }
+
 
     /**
      * creates iat and exp date.
@@ -67,17 +72,18 @@ class JwtGeneratorService {
         return base64(JSON.stringify(this[type]));
     }
 
-    createHashedSignature() {
-        const signatureFunction = crypto.createSign('RSA-SHA256')
+    sign() {
+        const signatureFunction = crypto.createSign('RSA-SHA256');
 
-        const PREV_KEY = fs.readFileSync(path.dirname(require.main.filename) + '/id_rsa_priv.pem', 'utf8');
-        const signatureBase64 = signatureFunction.sign(PREV_KEY, 'base64');
-        this.hashedSignature = base64.fromBase64(signatureBase64);
-    }
+        const header = this.hash('header');
+        const payload = this.hash('payload');
 
+        signatureFunction.write(`${header}.${payload}`);
+        signatureFunction.end();
 
-    get sign() {
-        return `${this.hash('header')}.${this.hash('payload')}.${this.hashedSignature}`;
+        const signatureBase64 = signatureFunction.sign(this.PREV_KEY, 'base64');
+        const signature = base64.fromBase64(signatureBase64);
+        return `${header}.${payload}.${signature}`;
     }
 }
 
