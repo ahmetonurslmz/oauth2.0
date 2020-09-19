@@ -103,10 +103,11 @@ module.exports.getAccessToken = async (req, res, next) => {
 
                     // generates access token
                     const jwtTokenInstance = new JWTGeneratorService();
-                    const access_token = jwtTokenInstance.sign;
+                    const access_token = jwtTokenInstance.sign();
 
+                    // generates refresh token
                     jwtTokenInstance.payload = jwtTokenInstance.getDateInformation(true);
-                    const refresh_token = jwtTokenInstance.sign;
+                    const refresh_token = jwtTokenInstance.sign();
 
                     const newAccessToken = {
                         authorization_code_id: authorizationCodeData._id,
