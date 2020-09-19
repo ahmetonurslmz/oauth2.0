@@ -1,5 +1,6 @@
 module.exports = {
     errorResolver(err, next) {
+        console.log(err);
         try {
             const messages = [];
             let code = 400;
@@ -18,6 +19,10 @@ module.exports = {
                 code = 403;
                 messages.push({
                     'forbidden': err.message,
+                });
+            } else if (Object.prototype.hasOwnProperty.call(err, 'field')) {
+                messages.push({
+                    [err.field]: err.message,
                 });
             } else if (Object.prototype.hasOwnProperty.call(err, 'errors')) {
                 const errorObject = err.errors[Object.keys(err.errors)[0]];
