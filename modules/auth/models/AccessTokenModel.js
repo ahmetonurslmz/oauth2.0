@@ -40,7 +40,7 @@ const ModelSchema = new Schema({
     },
     authorization_code_id: {
         type: mongoose.ObjectId,
-        required: true,
+        required: false,
     },
 }, { collection, versionKey: false });
 
