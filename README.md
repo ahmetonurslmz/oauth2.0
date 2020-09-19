@@ -8,11 +8,15 @@ To run project, in the directory of project type to terminal **npm run serve**
 
 ## Process
 Generate server keys,</br>
-Create client and keep client id,</br>
+Create client and keep client id,</br></br>
+
+**Authorization Code Grant Type:**</br>
 Receive Authorization Code with client id,</br>
-Generate Access Token with authorization code, client_id and grant_type.
+Issue Access Token with authorization code, client_id and 'code' grant_type.
 
 
+**Password Grant Type:**</br>
+Issue Access Token with random username, random password, client_id and 'token' grant_type.
 
 
 ## Specification
