@@ -2,6 +2,8 @@
 OAuth2.0 authorization server that is intermediary with client and resource owner in order to issue access token which enables client to access resource server.
 
 ## Run
+Change .env.production file name to .env,</br>
+Create new cluster on mongoDB and set connection url to **MONGO_URL** env variable,</br>
 To run project, in the directory of project type to terminal **npm run serve**
 
 ## Process
