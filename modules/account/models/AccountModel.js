@@ -13,7 +13,6 @@ const ModelSchema = new Schema(
         },
         password: {
             type: String,
-            unique: true,
             required: true,
         },
         is_active: {
