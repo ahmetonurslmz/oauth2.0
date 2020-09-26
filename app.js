@@ -8,8 +8,8 @@ const app = express();
 
 const path = require('path');
 
-app.set('view engine','ejs');
-app.set('views',path.join(__dirname, '/views'));
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, '/views'));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -32,15 +32,16 @@ app.use((err, req, res, next) => {
     }
 });
 
-
 const run = async () => {
     try {
         const connectDb = require('./core/database/mongo');
         await connectDb();
-        app.listen(process.env.PORT,async () => console.log(`Application runs on port ${process.env.PORT}`));
+        app.listen(process.env.PORT, async () =>
+            console.log(`Application runs on port ${process.env.PORT}`)
+        );
     } catch (e) {
         console.log('App has been crashed!');
     }
-}
+};
 
 run();

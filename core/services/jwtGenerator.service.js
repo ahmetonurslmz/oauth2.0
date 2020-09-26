@@ -3,7 +3,6 @@ const base64 = require('base64url');
 const fs = require('fs');
 const path = require('path');
 
-
 /**
  * When instance initialized, function that createHashedSignature works.
  * Default header or payload values cannot be changed.
@@ -24,9 +23,11 @@ class JwtGeneratorService {
     }
 
     fetchPrivateKey() {
-        this.PREV_KEY = fs.readFileSync(`${path.dirname(require.main.filename)}/id_rsa_priv.pem`, 'utf8');
+        this.PREV_KEY = fs.readFileSync(
+            `${path.dirname(require.main.filename)}/id_rsa_priv.pem`,
+            'utf8'
+        );
     }
-
 
     /**
      * creates iat and exp date.
@@ -36,12 +37,14 @@ class JwtGeneratorService {
     getDateInformation(isLongPeriod = false) {
         const date = new Date();
 
-        const period = isLongPeriod ? (24 * 60 * 60) : 60;
+        const period = isLongPeriod ? 24 * 60 * 60 : 60;
 
         return {
             iat: date.getTime(),
-            exp: new Date(date.setMinutes(date.getMinutes() + period)).getTime()
-        }
+            exp: new Date(
+                date.setMinutes(date.getMinutes() + period)
+            ).getTime(),
+        };
     }
 
     get header() {
@@ -86,6 +89,5 @@ class JwtGeneratorService {
         return `${header}.${payload}.${signature}`;
     }
 }
-
 
 module.exports = JwtGeneratorService;

@@ -4,14 +4,16 @@ const { check } = require('express-validator');
 
 const { login, register } = require('../controllers/accountController');
 
-router.post('/login', [
-    check('email').exists(),
-    check('password').exists(),
-], login);
+router.post(
+    '/login',
+    [check('email').exists(), check('password').exists()],
+    login
+);
 
-router.post('/register', [
-    check('email').exists(),
-    check('password').exists(),
-], register);
+router.post(
+    '/register',
+    [check('email').exists(), check('password').exists()],
+    register
+);
 
 module.exports = router;

@@ -1,17 +1,20 @@
 const Client = require('../models/ClientModel');
 const { findOrThrow } = require('../../../core/utils/mongoInterrogator');
 
-
 const getDomain = (url) => {
     const getHostName = (url) => {
         const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
-        if (match != null && match.length > 2 && typeof match[2] === 'string' && match[2].length > 0) {
+        if (
+            match != null &&
+            match.length > 2 &&
+            typeof match[2] === 'string' &&
+            match[2].length > 0
+        ) {
             return match[2];
-        }
-        else {
+        } else {
             return null;
         }
-    }
+    };
 
     let hostName = getHostName(url);
     let domain = hostName;
@@ -22,7 +25,10 @@ const getDomain = (url) => {
         if (parts != null && parts.length > 1) {
             domain = parts[1] + '.' + parts[0];
 
-            if (hostName.toLowerCase().indexOf('.co.uk') !== -1 && parts.length > 2) {
+            if (
+                hostName.toLowerCase().indexOf('.co.uk') !== -1 &&
+                parts.length > 2
+            ) {
                 domain = parts[2] + '.' + domain;
             }
         }
@@ -37,9 +43,17 @@ const validateClient = async (req, clientId, responseType, data = {}) => {
         data.client_url = getDomain(data.client_url);
     }
 
-    const requestedClient = findOrThrow(Client, { _id: clientId, is_active: true, response_type: responseType, ...data });
+    const requestedClient = findOrThrow(Client, {
+        _id: clientId,
+        is_active: true,
+        response_type: responseType,
+        ...data,
+    });
 
-    if (req.hostname === 'localhost' || requestedClient.client_url === req.hostname) {
+    if (
+        req.hostname === 'localhost' ||
+        requestedClient.client_url === req.hostname
+    ) {
         return requestedClient;
     }
     const e = new Error();

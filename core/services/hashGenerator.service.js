@@ -18,9 +18,11 @@ class HashGeneratorService {
     }
 
     generate() {
-        return crypto.createHmac(this.algorithm, this.secret).update(this.generateRandomString()).digest(this.encodingType);
+        return crypto
+            .createHmac(this.algorithm, this.secret)
+            .update(this.generateRandomString())
+            .digest(this.encodingType);
     }
 }
-
 
 module.exports = HashGeneratorService;

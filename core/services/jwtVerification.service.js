@@ -10,7 +10,10 @@ class JwtVerificationService {
     }
 
     fetchPublicKey() {
-        this.PUB_KEY = fs.readFileSync(`${path.dirname(require.main.filename)}/id_rsa_pub.pem`, 'utf8');
+        this.PUB_KEY = fs.readFileSync(
+            `${path.dirname(require.main.filename)}/id_rsa_pub.pem`,
+            'utf8'
+        );
     }
 
     parseAccessToken(accessToken) {
@@ -32,7 +35,11 @@ class JwtVerificationService {
         verifyFunction.end();
 
         const jwtSignatureBase64 = base64.toBase64(this.signature);
-        return verifyFunction.verify(this.PUB_KEY, jwtSignatureBase64, 'base64');
+        return verifyFunction.verify(
+            this.PUB_KEY,
+            jwtSignatureBase64,
+            'base64'
+        );
     }
 }
 

@@ -5,7 +5,13 @@ const validateEntries = (entries, req) => {
         // checks whether req.body has key that equals dynamic entry parameter
         // checks whether it filled
         // checks whether it does not have blank.
-        if (!(Object.prototype.hasOwnProperty.call(req.body, entry) && req.body[entry] && req.body[entry].trim())) {
+        if (
+            !(
+                Object.prototype.hasOwnProperty.call(req.body, entry) &&
+                req.body[entry] &&
+                req.body[entry].trim()
+            )
+        ) {
             const err = new Error();
             err.field = entry;
             err.message = `Couldn't find ${entry}`;

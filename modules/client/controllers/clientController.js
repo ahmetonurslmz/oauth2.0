@@ -1,10 +1,13 @@
-const { errorResolver, successResolver, validationResolver } = require('../../../core/utils/resolvers');
+const {
+    errorResolver,
+    successResolver,
+    validationResolver,
+} = require('../../../core/utils/resolvers');
 
 const { validationResult } = require('express-validator');
 
 // Models
 const Client = require('../models/ClientModel');
-
 
 module.exports.createClient = async (req, res, next) => {
     const errors = validationResult(req);
@@ -14,7 +17,9 @@ module.exports.createClient = async (req, res, next) => {
         const { client_url } = req.body;
 
         const newClient = {
-            response_type: req.body.response_type ? req.body.response_type : 'code',
+            response_type: req.body.response_type
+                ? req.body.response_type
+                : 'code',
             client_url,
         };
 
@@ -30,4 +35,3 @@ module.exports.createClient = async (req, res, next) => {
         }
     }
 };
-
