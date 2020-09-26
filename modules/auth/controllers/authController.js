@@ -1,6 +1,5 @@
 const { errorResolver, successResolver, validationResolver } = require('../../../core/utils/resolvers');
 const { validationResult } = require('express-validator');
-const Client = require('../models/ClientModel');
 
 const { findOrThrow } = require('../../../core/utils/mongoInterrogator');
 
@@ -9,7 +8,7 @@ const HashGeneratorService = require('../../../core/services/hashGenerator.servi
 const JWTGeneratorService = require('../../../core/services/jwtGenerator.service');
 const JwtVerificationService = require('../../../core/services/jwtVerification.service');
 
-const validateClient = require('../../../core/services/validateClient.service');
+const validateClient = require('../../client/services/validateClient.service');
 const validateEntriesService = require('../../../core/services/validateEntries.service');
 
 
@@ -209,17 +208,31 @@ module.exports.getAccessToken = async (req, res, next) => {
     }
 };
 
+module.exports.chooseAccount = async (req, res, next) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+        validationResolver(errors.array(), next);
+    } else {
+        try {
+            const { client_id, redirect_url } = req.query;
+            await validateClient(req, client_id, 'code', { client_url: redirect_url });
+            res.render('login');
+        } catch (e) {
+            res.render('invalidClient');
+        }
+    }
+};
+
 
 module.exports.getAuthorizationCode = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
         validationResolver(errors.array(), next);
     } else {
-        const { client_id } = req.body;
+        const { client_id, redirect_url } = req.body;
 
         try {
-            await validateClient(req, client_id, 'code');
-
+            await validateClient(req, client_id, 'code', { client_url: redirect_url });
             const HashGeneratorServiceInstance = new HashGeneratorService();
             const hash = HashGeneratorServiceInstance.generate();
 
@@ -242,6 +255,7 @@ module.exports.getAuthorizationCode = async (req, res, next) => {
 
             try {
                 const { _doc } = await AuthorizationCode.create(newAuthorizationCode);
+
                 successResolver(res, {
                     data: _doc,
                     message: 'Authorization code generated!',
@@ -251,34 +265,6 @@ module.exports.getAuthorizationCode = async (req, res, next) => {
             }
         } catch (e) {
             errorResolver(e, next);
-        }
-    }
-};
-
-
-module.exports.createClient = async (req, res, next) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-        validationResolver(errors.array(), next);
-    } else {
-
-        const { client_url } = req.body;
-
-        const newClient = {
-            response_type: req.body.response_type ? req.body.response_type : 'code',
-            client_url,
-        };
-
-        try {
-            await Client.init();
-            const { _doc: data } = await Client.create(newClient);
-            successResolver(res, {
-                data,
-                message: 'Client created!',
-            });
-        } catch (e) {
-            errorResolver(e, next);
-
         }
     }
 };
