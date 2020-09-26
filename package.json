@@ -19,13 +19,16 @@
   "homepage": "https://github.com/ahmetonurslmz/oauth2#readme",
   "dependencies": {
     "base64url": "^3.0.1",
+    "bcryptjs": "^2.4.3",
     "bluebird": "^3.7.2",
     "dotenv": "^8.2.0",
+    "ejs": "^3.1.5",
     "express": "^4.17.1",
     "express-validator": "^6.6.1",
     "mongoose": "^5.10.2"
   },
   "devDependencies": {
-    "nodemon": "^2.0.4"
+    "nodemon": "^2.0.4",
+    "request": "^2.88.2"
   }
 }
