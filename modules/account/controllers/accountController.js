@@ -1,4 +1,8 @@
-const { errorResolver, successResolver, validationResolver } = require('../../../core/utils/resolvers');
+const {
+    errorResolver,
+    successResolver,
+    validationResolver,
+} = require('../../../core/utils/resolvers');
 
 const { validationResult } = require('express-validator');
 
@@ -16,7 +20,6 @@ module.exports.login = async (req, res, next) => {
         validationResolver(errors.array(), next);
     } else {
         try {
-
             const { email, password } = req.body;
 
             const Account = require('../models/AccountModel');
@@ -75,4 +78,4 @@ module.exports.register = async (req, res, next) => {
             errorResolver(e, next);
         }
     }
-}
+};
