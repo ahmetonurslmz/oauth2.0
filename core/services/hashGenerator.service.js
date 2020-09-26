@@ -10,7 +10,7 @@ class HashGeneratorService {
     }
 
     get encodingType() {
-        return 'base64';
+        return 'hex';
     }
 
     generateRandomString() {
