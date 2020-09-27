@@ -43,23 +43,12 @@ const validateClient = async (req, clientId, responseType, data = {}) => {
         data.client_url = getDomain(data.client_url);
     }
 
-    const requestedClient = findOrThrow(Client, {
+    return findOrThrow(Client, {
         _id: clientId,
         is_active: true,
         response_type: responseType,
         ...data,
     });
-
-    if (
-        req.hostname === 'localhost' ||
-        requestedClient.client_url === req.hostname
-    ) {
-        return requestedClient;
-    }
-    const e = new Error();
-    e.message = 'Invalid client!';
-    e.code = 403;
-    throw e;
 };
 
 module.exports = validateClient;
