@@ -2,38 +2,11 @@ const Client = require('../models/ClientModel');
 const { findOrThrow } = require('../../../core/utils/mongoInterrogator');
 
 const getDomain = (url) => {
-    const getHostName = (url) => {
-        const match = url.match(/:\/\/(www[0-9]?\.)?(.[^/:]+)/i);
-        if (
-            match != null &&
-            match.length > 2 &&
-            typeof match[2] === 'string' &&
-            match[2].length > 0
-        ) {
-            return match[2];
-        } else {
-            return null;
-        }
-    };
-
-    let hostName = getHostName(url);
-    let domain = hostName;
-
-    if (hostName != null) {
-        const parts = hostName.split('.').reverse();
-
-        if (parts != null && parts.length > 1) {
-            domain = parts[1] + '.' + parts[0];
-
-            if (
-                hostName.toLowerCase().indexOf('.co.uk') !== -1 &&
-                parts.length > 2
-            ) {
-                domain = parts[2] + '.' + domain;
-            }
-        }
+    let hostname = new URL(url).hostname;
+    if (hostname.slice(0, 3) === 'www') {
+        return hostname.slice(4, hostname.length);
     }
-    return domain;
+    return hostname;
 };
 
 const validateClient = async (req, clientId, responseType, data = {}) => {
