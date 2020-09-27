@@ -5,7 +5,6 @@ const { check } = require('express-validator');
 const {
     getAccessToken,
     getAuthorizationCode,
-    generateServerKeys,
     verifyAccessToken,
     chooseAccount,
 } = require('../controllers/authController');
@@ -24,7 +23,6 @@ router.post(
     ],
     getAuthorizationCode
 );
-router.post('/server_keys', generateServerKeys);
 router.post(
     '/access_token/verification',
     [check('access_token').exists()],

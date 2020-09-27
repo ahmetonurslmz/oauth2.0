@@ -14,36 +14,6 @@ const JwtVerificationService = require('../../../core/services/jwtVerification.s
 const validateClient = require('../../client/services/validateClient.service');
 const validateEntriesService = require('../../../core/services/validateEntries.service');
 
-module.exports.generateServerKeys = async (req, res) => {
-    const crypto = require('crypto');
-    const { privateKey, publicKey } = crypto.generateKeyPairSync('rsa', {
-        modulusLength: 2048,
-        publicKeyEncoding: {
-            type: 'spki',
-            format: 'pem',
-        },
-        privateKeyEncoding: {
-            type: 'pkcs8',
-            format: 'pem',
-        },
-    });
-
-    const fs = require('fs');
-    fs.writeFile('id_rsa_priv.pem', privateKey, 'utf8', function (err) {
-        if (err) return console.log(err);
-        console.log('id_rsa_priv.pem was generated.');
-    });
-
-    fs.writeFile('id_rsa_pub.pem', publicKey, 'utf8', function (err) {
-        if (err) return console.log(err);
-        console.log('id_rsa_pub.pem was generated');
-    });
-
-    successResolver(res, {
-        message: 'Server keys generated!',
-    });
-};
-
 module.exports.verifyAccessToken = async (req, res, next) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -79,7 +49,7 @@ module.exports.verifyAccessToken = async (req, res, next) => {
 };
 
 /**
- * Works for only authorization code grant type
+ * Works for both authorization code and password grant types
  * @param req
  * @param res
  * @param next
