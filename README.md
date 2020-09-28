@@ -4,6 +4,7 @@ OAuth2.0 authorization server that is intermediary with client and resource owne
 ## Run
 Change .env.production file name to .env,</br>
 Create new cluster on mongoDB and set connection url to **MONGO_URL** env variable,</br>
+Add a SERVER_KEY to .env file to use it in some security verification,</br>
 To run project, in the directory of project type to terminal **npm run serve**
 
 ## Process
