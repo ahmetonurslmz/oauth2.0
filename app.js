@@ -41,6 +41,7 @@ const run = async () => {
         );
     } catch (e) {
         console.log('App has been crashed!');
+        console.log('INFO: Please check env variables to run app.');
     }
 };
 
